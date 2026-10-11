@@ -1,0 +1,383 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover" />
+  <title>Lista de Compras</title>
+
+  <link rel="apple-touch-icon" sizes="180x180" href="apple-touch-icon.png">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="default">
+  <meta name="apple-mobile-web-app-title" content="Compras">
+  <meta name="theme-color" content="#16a34a">
+
+  <style>
+    * {
+      box-sizing: border-box;
+      -webkit-tap-highlight-color: transparent;
+      user-select: none;
+    }
+
+    /* Regra que impede o auto-zoom do Safari */
+    input, textarea, select {
+      font-size: 17px !important;
+      user-select: auto;
+      -webkit-text-size-adjust: 100%;
+    }
+
+    html, body {
+      margin: 0;
+      padding: 0;
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+      background: #f3f4f6;
+      color: #111827;
+      min-height: 100%;
+      width: 100%;
+      overflow-x: hidden;
+      touch-action: pan-y;
+    }
+
+    header {
+      position: sticky;
+      top: 0;
+      z-index: 30;
+      background: #16a34a;
+      color: white;
+      padding: max(14px, env(safe-area-inset-top)) 16px 14px 16px;
+      text-align: center;
+      box-shadow: 0 2px 6px rgba(0, 0, 0, .12);
+    }
+
+    header h1 {
+      margin: 0;
+      font-size: 20px;
+      font-weight: 700;
+    }
+
+    main {
+      padding: 14px;
+      padding-bottom: 140px;
+      max-width: 650px;
+      margin: 0 auto;
+    }
+
+    .card {
+      background: #ffffff;
+      border-radius: 14px;
+      padding: 14px;
+      box-shadow: 0 2px 8px rgba(0, 0, 0, .06);
+      margin-bottom: 12px;
+    }
+
+    label {
+      display: block;
+      font-size: 12px;
+      font-weight: 700;
+      color: #4b5563;
+      margin-bottom: 4px;
+      text-transform: uppercase;
+      letter-spacing: 0.3px;
+    }
+
+    input {
+      width: 100%;
+      padding: 12px;
+      font-size: 17px !important;
+      border-radius: 10px;
+      border: 1px solid #d1d5db;
+      background: #f9fafb;
+      color: #111827;
+      outline: none;
+    }
+
+    input:focus {
+      border-color: #16a34a;
+      background: #ffffff;
+      box-shadow: 0 0 0 2px rgba(22, 163, 74, 0.2);
+    }
+
+    .form-novo {
+      display: grid;
+      gap: 10px;
+    }
+
+    button {
+      width: 100%;
+      padding: 14px;
+      font-size: 16px;
+      font-weight: 700;
+      border: none;
+      border-radius: 12px;
+      cursor: pointer;
+    }
+
+    .adicionar {
+      background: #16a34a;
+      color: #ffffff;
+    }
+
+    .adicionar:active {
+      background: #15803d;
+    }
+
+    .item-topo {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      gap: 10px;
+    }
+
+    .item-nome {
+      font-size: 17px;
+      font-weight: 700;
+      color: #111827;
+      word-break: break-word;
+    }
+
+    .remover {
+      width: 38px;
+      height: 38px;
+      padding: 0;
+      font-size: 18px;
+      font-weight: bold;
+      background: #fee2e2;
+      color: #dc2626;
+      border-radius: 10px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      flex-shrink: 0;
+    }
+
+    .remover:active {
+      background: #fecaca;
+    }
+
+    .campos-item {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 10px;
+      margin-top: 10px;
+    }
+
+    .item-total {
+      margin-top: 10px;
+      font-size: 15px;
+      font-weight: 700;
+      color: #16a34a;
+      text-align: right;
+    }
+
+    .vazio {
+      text-align: center;
+      color: #6b7280;
+      padding: 30px 10px;
+      font-size: 15px;
+    }
+
+    .botoes-aux {
+      display: flex;
+      gap: 8px;
+      margin-top: 16px;
+    }
+
+    .btn-aux {
+      flex: 1;
+      background: #e0e7ff;
+      color: #3730a3;
+      padding: 12px;
+      font-size: 14px;
+      font-weight: 600;
+      border-radius: 10px;
+      text-align: center;
+      cursor: pointer;
+    }
+
+    .btn-limpar {
+      background: #fee2e2;
+      color: #dc2626;
+    }
+
+    .barra-total {
+      position: fixed;
+      left: 0;
+      right: 0;
+      bottom: 0;
+      z-index: 20;
+      background: #ffffff;
+      border-top: 1px solid #e5e7eb;
+      padding: 12px 18px calc(12px + env(safe-area-inset-bottom)) 18px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      box-shadow: 0 -2px 10px rgba(0, 0, 0, .06);
+    }
+
+    .barra-total span {
+      font-size: 14px;
+      font-weight: 700;
+      color: #4b5563;
+      text-transform: uppercase;
+      letter-spacing: 0.4px;
+    }
+
+    .valor-total {
+      font-size: 22px;
+      font-weight: 800;
+      color: #16a34a;
+    }
+  </style>
+</head>
+
+<body>
+
+  <header>
+    <h1>🛒 Lista de Compras</h1>
+  </header>
+
+  <main>
+    <form id="formItem" class="card form-novo">
+      <div>
+        <label for="item">Item para comprar</label>
+        <input id="item" type="text" placeholder="Ex.: Arroz, feijão, sabonete..." autocomplete="off" />
+      </div>
+      <button type="submit" class="adicionar">+ Adicionar item</button>
+    </form>
+
+    <div id="lista"></div>
+
+    <div id="vazio" class="vazio">
+      Nenhum item adicionado ainda.<br>Digite acima para começar.
+    </div>
+
+    <div class="botoes-aux">
+      <button type="button" id="exportar" class="btn-aux">💾 Backup</button>
+      <label for="importar" class="btn-aux">📂 Restaurar</label>
+      <input type="file" id="importar" accept=".json" hidden />
+      <button type="button" id="limpar" class="btn-aux btn-limpar">Limpar</button>
+    </div>
+  </main>
+
+  <div class="barra-total">
+    <span>Total Geral</span>
+    <div id="totalGeral" class="valor-total">R$ 0,00</div>
+  </div>
+
+  <script>
+    // Bloqueia gestos nativos de pinça e toque duplo do iOS
+    document.addEventListener('gesturestart', (e) => e.preventDefault());
+    document.addEventListener('gesturechange', (e) => e.preventDefault());
+
+    let lastTouchEnd = 0;
+    document.addEventListener('touchend', (e) => {
+      const now = Date.now();
+      if (now - lastTouchEnd <= 300) {
+        e.preventDefault();
+      }
+      lastTouchEnd = now;
+    }, false);
+
+    const CHAVE = "listaComprasPadrao_v1";
+    let itens = [];
+
+    try {
+      itens = JSON.parse(localStorage.getItem(CHAVE) || "[]");
+      if (!Array.isArray(itens)) itens = [];
+    } catch {
+      itens = [];
+    }
+
+    const form = document.getElementById("formItem");
+    const itemInput = document.getElementById("item");
+    const lista = document.getElementById("lista");
+    const totalGeral = document.getElementById("totalGeral");
+    const vazio = document.getElementById("vazio");
+    const importarInput = document.getElementById("importar");
+
+    function escaparHtml(texto) {
+      const div = document.createElement("div");
+      div.textContent = texto;
+      return div.innerHTML;
+    }
+
+    function converterNumero(texto) {
+      if (!texto) return 0;
+      let val = String(texto).trim().replace("R$", "").replace(/\s/g, "");
+      if (val.includes(",") && val.includes(".")) val = val.replace(/\./g, "").replace(",", ".");
+      else if (val.includes(",")) val = val.replace(",", ".");
+      const n = Number(val);
+      return Number.isFinite(n) && n >= 0 ? n : 0;
+    }
+
+    function formatar(valor) {
+      return Number(valor || 0).toLocaleString("pt-BR", {
+        style: "currency",
+        currency: "BRL"
+      });
+    }
+
+    function salvar() {
+      try {
+        localStorage.setItem(CHAVE, JSON.stringify(itens));
+      } catch (e) {
+        console.error("Erro ao salvar:", e);
+      }
+    }
+
+    function atualizarTotais() {
+      const soma = itens.reduce((acc, it) => acc + (Number(it.quantidade || 0) * Number(it.valor || 0)), 0);
+      totalGeral.textContent = formatar(soma);
+      vazio.style.display = itens.length === 0 ? "block" : "none";
+    }
+
+    function renderizarLista() {
+      lista.innerHTML = "";
+
+      itens.forEach((item, index) => {
+        const qtd = Number(item.quantidade || 0);
+        const val = Number(item.valor || 0);
+        const subtotal = qtd * val;
+
+        const card = document.createElement("div");
+        card.className = "card";
+
+        card.innerHTML = `
+          <div class="item-topo">
+            <span class="item-nome">${escaparHtml(item.item)}</span>
+            <button type="button" class="remover" data-index="${index}" aria-label="Remover">✕</button>
+          </div>
+
+          <div class="campos-item">
+            <div>
+              <label for="qtd-${index}">Quantidade</label>
+              <input
+                id="qtd-${index}"
+                type="text"
+                inputmode="decimal"
+                placeholder="Ex.: 2"
+                value="${qtd > 0 ? qtd : ''}"
+                data-campo="quantidade"
+                data-index="${index}"
+              />
+            </div>
+            <div>
+              <label for="val-${index}">Valor Unit.</label>
+              <input
+                id="val-${index}"
+                type="text"
+                inputmode="decimal"
+                placeholder="Ex.: 12,90"
+                value="${val > 0 ? String(val).replace('.', ',') : ''}"
+                data-campo="valor"
+                data-index="${index}"
+              />
+            </div>
+          </div>
+
+          <div class="item-total" id="subtotal-${index}">
+            Total: ${formatar(subtotal)}
+          </div>
+        `;
+
+        lista.appendChild(card);
+      
