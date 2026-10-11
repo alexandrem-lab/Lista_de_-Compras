@@ -5,11 +5,11 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover" />
   <title>Lista de Compras</title>
 
-  <link rel="apple-touch-icon" sizes="180x180" href="apple-touch-icon.png">
+  <link rel="apple-touch-icon" sizes="180x180" href="Apple-touch-icon.png">
   <meta name="apple-mobile-web-app-capable" content="yes">
-  <meta name="apple-mobile-web-app-status-bar-style" content="default">
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
   <meta name="apple-mobile-web-app-title" content="Compras">
-  <meta name="theme-color" content="#16a34a">
+  <meta name="theme-color" content="#000000">
 
   <style>
     * {
@@ -18,7 +18,7 @@
       user-select: none;
     }
 
-    /* Regra que impede o auto-zoom do Safari */
+    /* Regra que bloqueia o auto-zoom do iOS Safari */
     input, textarea, select {
       font-size: 17px !important;
       user-select: auto;
@@ -28,256 +28,276 @@
     html, body {
       margin: 0;
       padding: 0;
-      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
-      background: #f3f4f6;
-      color: #111827;
-      min-height: 100%;
+      background: #000000;
+      color: #ffffff;
+      font-family: -apple-system, BlinkMacSystemFont, "SF Pro Text", "SF Pro Icons", "Helvetica Neue", Helvetica, Arial, sans-serif;
+      min-height: 100vh;
       width: 100%;
       overflow-x: hidden;
-      touch-action: pan-y;
     }
 
     header {
       position: sticky;
       top: 0;
       z-index: 30;
-      background: #16a34a;
-      color: white;
-      padding: max(14px, env(safe-area-inset-top)) 16px 14px 16px;
-      text-align: center;
-      box-shadow: 0 2px 6px rgba(0, 0, 0, .12);
+      background: rgba(28, 28, 30, 0.85);
+      backdrop-filter: blur(20px);
+      -webkit-backdrop-filter: blur(20px);
+      border-bottom: 0.5px solid rgba(255, 255, 255, 0.15);
+      padding: max(12px, env(safe-area-inset-top)) 16px 12px 16px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
     }
 
     header h1 {
       margin: 0;
       font-size: 20px;
       font-weight: 700;
+      letter-spacing: -0.4px;
+    }
+
+    .contador {
+      font-size: 13px;
+      color: #8e8e93;
     }
 
     main {
-      padding: 14px;
+      padding: 16px;
       padding-bottom: 140px;
-      max-width: 650px;
+      max-width: 600px;
       margin: 0 auto;
     }
 
-    .card {
-      background: #ffffff;
-      border-radius: 14px;
-      padding: 14px;
-      box-shadow: 0 2px 8px rgba(0, 0, 0, .06);
-      margin-bottom: 12px;
-    }
-
-    label {
-      display: block;
-      font-size: 12px;
-      font-weight: 700;
-      color: #4b5563;
-      margin-bottom: 4px;
-      text-transform: uppercase;
-      letter-spacing: 0.3px;
-    }
-
-    input {
-      width: 100%;
-      padding: 12px;
-      font-size: 17px !important;
-      border-radius: 10px;
-      border: 1px solid #d1d5db;
-      background: #f9fafb;
-      color: #111827;
-      outline: none;
-    }
-
-    input:focus {
-      border-color: #16a34a;
-      background: #ffffff;
-      box-shadow: 0 0 0 2px rgba(22, 163, 74, 0.2);
-    }
-
-    .form-novo {
-      display: grid;
-      gap: 10px;
-    }
-
-    button {
-      width: 100%;
-      padding: 14px;
-      font-size: 16px;
-      font-weight: 700;
-      border: none;
+    .novo-card {
+      background: #1c1c1e;
       border-radius: 12px;
+      padding: 10px 14px;
+      display: flex;
+      gap: 10px;
+      align-items: center;
+      margin-bottom: 18px;
+    }
+
+    .novo-card input {
+      flex: 1;
+      background: transparent;
+      border: none;
+      color: #fff;
+      font-size: 17px !important;
+      outline: none;
+      padding: 6px 0;
+    }
+
+    .novo-card input::placeholder {
+      color: #636366;
+    }
+
+    .btn-add {
+      background: #30d158;
+      color: #000;
+      border: none;
+      border-radius: 20px;
+      padding: 6px 14px;
+      font-weight: 600;
+      font-size: 14px;
       cursor: pointer;
     }
 
-    .adicionar {
-      background: #16a34a;
-      color: #ffffff;
+    .swipe-container {
+      position: relative;
+      margin-bottom: 10px;
+      border-radius: 12px;
+      overflow: hidden;
+      background: #ff453a;
     }
 
-    .adicionar:active {
-      background: #15803d;
+    .btn-apagar-bg {
+      position: absolute;
+      right: 0;
+      top: 0;
+      bottom: 0;
+      width: 90px;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      color: #fff;
+      font-size: 12px;
+      font-weight: 600;
+      gap: 4px;
+      cursor: pointer;
+    }
+
+    .btn-apagar-bg svg {
+      width: 20px;
+      height: 20px;
+      fill: #fff;
+    }
+
+    .item-card {
+      position: relative;
+      background: #1c1c1e;
+      padding: 14px 16px;
+      border-radius: 12px;
+      transform: translateX(0px);
+      transition: transform 0.2s cubic-bezier(0.2, 0.8, 0.2, 1);
+      z-index: 2;
     }
 
     .item-topo {
       display: flex;
       justify-content: space-between;
-      align-items: center;
-      gap: 10px;
+      align-items: baseline;
+      margin-bottom: 10px;
     }
 
-    .item-nome {
+    .item-titulo {
       font-size: 17px;
-      font-weight: 700;
-      color: #111827;
-      word-break: break-word;
+      font-weight: 600;
+      color: #ffffff;
+      letter-spacing: -0.2px;
     }
 
-    .remover {
-      width: 38px;
-      height: 38px;
-      padding: 0;
-      font-size: 18px;
-      font-weight: bold;
-      background: #fee2e2;
-      color: #dc2626;
-      border-radius: 10px;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      flex-shrink: 0;
+    .item-subtotal {
+      font-size: 15px;
+      font-weight: 600;
+      color: #30d158;
     }
 
-    .remover:active {
-      background: #fecaca;
-    }
-
-    .campos-item {
+    .campos-inline {
       display: grid;
       grid-template-columns: 1fr 1fr;
       gap: 10px;
-      margin-top: 10px;
     }
 
-    .item-total {
-      margin-top: 10px;
-      font-size: 15px;
-      font-weight: 700;
-      color: #16a34a;
-      text-align: right;
+    .input-box {
+      background: #2c2c2e;
+      border-radius: 8px;
+      padding: 6px 10px;
+      display: flex;
+      flex-direction: column;
+    }
+
+    .input-box label {
+      font-size: 11px;
+      text-transform: uppercase;
+      color: #8e8e93;
+      font-weight: 600;
+      margin-bottom: 2px;
+    }
+
+    .input-box input {
+      background: transparent;
+      border: none;
+      color: #ffffff;
+      font-size: 17px !important;
+      font-weight: 500;
+      outline: none;
+      padding: 0;
+      width: 100%;
+      height: 24px;
     }
 
     .vazio {
       text-align: center;
-      color: #6b7280;
-      padding: 30px 10px;
+      color: #636366;
+      padding: 40px 10px;
       font-size: 15px;
     }
 
-    .botoes-aux {
-      display: flex;
-      gap: 8px;
-      margin-top: 16px;
-    }
-
-    .btn-aux {
-      flex: 1;
-      background: #e0e7ff;
-      color: #3730a3;
-      padding: 12px;
-      font-size: 14px;
-      font-weight: 600;
-      border-radius: 10px;
-      text-align: center;
-      cursor: pointer;
-    }
-
-    .btn-limpar {
-      background: #fee2e2;
-      color: #dc2626;
-    }
-
-    .barra-total {
+    .barra-rodape {
       position: fixed;
       left: 0;
       right: 0;
       bottom: 0;
       z-index: 20;
-      background: #ffffff;
-      border-top: 1px solid #e5e7eb;
-      padding: 12px 18px calc(12px + env(safe-area-inset-bottom)) 18px;
+      background: rgba(28, 28, 30, 0.9);
+      backdrop-filter: blur(20px);
+      -webkit-backdrop-filter: blur(20px);
+      border-top: 0.5px solid rgba(255, 255, 255, 0.15);
+      padding: 12px 20px calc(12px + env(safe-area-inset-bottom)) 20px;
       display: flex;
       justify-content: space-between;
       align-items: center;
-      box-shadow: 0 -2px 10px rgba(0, 0, 0, .06);
     }
 
-    .barra-total span {
-      font-size: 14px;
-      font-weight: 700;
-      color: #4b5563;
+    .rodape-label {
+      font-size: 12px;
       text-transform: uppercase;
-      letter-spacing: 0.4px;
+      letter-spacing: 0.5px;
+      color: #8e8e93;
+      font-weight: 600;
     }
 
-    .valor-total {
+    .rodape-total {
       font-size: 22px;
-      font-weight: 800;
-      color: #16a34a;
+      font-weight: 700;
+      color: #30d158;
+    }
+
+    .botoes-aux {
+      display: flex;
+      gap: 8px;
+      margin-top: 24px;
+    }
+
+    .btn-secundario {
+      flex: 1;
+      background: #2c2c2e;
+      color: #0a84ff;
+      border: none;
+      padding: 12px;
+      border-radius: 10px;
+      font-size: 14px;
+      font-weight: 600;
+      text-align: center;
+      cursor: pointer;
     }
   </style>
 </head>
-
 <body>
 
   <header>
-    <h1>🛒 Lista de Compras</h1>
+    <h1>Lista de Compras</h1>
+    <span id="contadorItens" class="contador">0 itens</span>
   </header>
 
   <main>
-    <form id="formItem" class="card form-novo">
-      <div>
-        <label for="item">Item para comprar</label>
-        <input id="item" type="text" placeholder="Ex.: Arroz, feijão, sabonete..." autocomplete="off" />
-      </div>
-      <button type="submit" class="adicionar">+ Adicionar item</button>
+    <form id="formAdicionar" class="novo-card">
+      <input id="nomeInput" type="text" placeholder="Adicionar item..." autocomplete="off" />
+      <button type="submit" class="btn-add">+</button>
     </form>
 
-    <div id="lista"></div>
+    <div id="listaItens"></div>
 
-    <div id="vazio" class="vazio">
-      Nenhum item adicionado ainda.<br>Digite acima para começar.
+    <div id="msgVazio" class="vazio">
+      Nenhum item na lista.<br>
+      Adicione acima e deslize para apagar.
     </div>
 
     <div class="botoes-aux">
-      <button type="button" id="exportar" class="btn-aux">💾 Backup</button>
-      <label for="importar" class="btn-aux">📂 Restaurar</label>
-      <input type="file" id="importar" accept=".json" hidden />
-      <button type="button" id="limpar" class="btn-aux btn-limpar">Limpar</button>
+      <button type="button" id="btnExportar" class="btn-secundario">Backup</button>
+      <label for="inputImportar" class="btn-secundario">Restaurar</label>
+      <input type="file" id="inputImportar" accept=".json" hidden />
+      <button type="button" id="btnLimparTudo" class="btn-secundario" style="color: #ff453a;">Limpar</button>
     </div>
   </main>
 
-  <div class="barra-total">
-    <span>Total Geral</span>
-    <div id="totalGeral" class="valor-total">R$ 0,00</div>
+  <div class="barra-rodape">
+    <div>
+      <div class="rodape-label">Total estimado</div>
+      <div id="totalGeral" class="rodape-total">R$ 0,00</div>
+    </div>
   </div>
 
   <script>
-    // Bloqueia gestos nativos de pinça e toque duplo do iOS
-    document.addEventListener('gesturestart', (e) => e.preventDefault());
-    document.addEventListener('gesturechange', (e) => e.preventDefault());
+    // Impede o gesto nativo de pinça/zoom do Safari
+    document.addEventListener('gesturestart', function (e) {
+      e.preventDefault();
+    });
 
-    let lastTouchEnd = 0;
-    document.addEventListener('touchend', (e) => {
-      const now = Date.now();
-      if (now - lastTouchEnd <= 300) {
-        e.preventDefault();
-      }
-      lastTouchEnd = now;
-    }, false);
-
-    const CHAVE = "listaComprasPadrao_v1";
+    const CHAVE = "listaComprasIOS_v1";
     let itens = [];
 
     try {
@@ -287,97 +307,191 @@
       itens = [];
     }
 
-    const form = document.getElementById("formItem");
-    const itemInput = document.getElementById("item");
-    const lista = document.getElementById("lista");
+    const form = document.getElementById("formAdicionar");
+    const nomeInput = document.getElementById("nomeInput");
+    const lista = document.getElementById("listaItens");
     const totalGeral = document.getElementById("totalGeral");
-    const vazio = document.getElementById("vazio");
-    const importarInput = document.getElementById("importar");
+    const contadorItens = document.getElementById("contadorItens");
+    const msgVazio = document.getElementById("msgVazio");
+    const inputImportar = document.getElementById("inputImportar");
 
-    function escaparHtml(texto) {
-      const div = document.createElement("div");
-      div.textContent = texto;
-      return div.innerHTML;
+    function salvar() {
+      localStorage.setItem(CHAVE, JSON.stringify(itens));
     }
 
-    function converterNumero(texto) {
-      if (!texto) return 0;
-      let val = String(texto).trim().replace("R$", "").replace(/\s/g, "");
-      if (val.includes(",") && val.includes(".")) val = val.replace(/\./g, "").replace(",", ".");
-      else if (val.includes(",")) val = val.replace(",", ".");
-      const n = Number(val);
-      return Number.isFinite(n) && n >= 0 ? n : 0;
-    }
-
-    function formatar(valor) {
-      return Number(valor || 0).toLocaleString("pt-BR", {
+    function formatarMoeda(val) {
+      return Number(val || 0).toLocaleString("pt-BR", {
         style: "currency",
         currency: "BRL"
       });
     }
 
-    function salvar() {
-      try {
-        localStorage.setItem(CHAVE, JSON.stringify(itens));
-      } catch (e) {
-        console.error("Erro ao salvar:", e);
-      }
+    function converterNum(texto) {
+      if (!texto) return 0;
+      let str = String(texto).trim().replace("R$", "").replace(/\s/g, "");
+      if (str.includes(",") && str.includes(".")) str = str.replace(/\./g, "").replace(",", ".");
+      else if (str.includes(",")) str = str.replace(",", ".");
+      const n = Number(str);
+      return Number.isFinite(n) && n >= 0 ? n : 0;
     }
 
     function atualizarTotais() {
-      const soma = itens.reduce((acc, it) => acc + (Number(it.quantidade || 0) * Number(it.valor || 0)), 0);
-      totalGeral.textContent = formatar(soma);
-      vazio.style.display = itens.length === 0 ? "block" : "none";
+      const total = itens.reduce((s, it) => s + (Number(it.qtd || 0) * Number(it.preco || 0)), 0);
+      totalGeral.textContent = formatarMoeda(total);
+      contadorItens.textContent = `${itens.length} ${itens.length === 1 ? 'item' : 'itens'}`;
+      msgVazio.style.display = itens.length === 0 ? "block" : "none";
     }
 
-    function renderizarLista() {
+    function renderizar() {
       lista.innerHTML = "";
 
-      itens.forEach((item, index) => {
-        const qtd = Number(item.quantidade || 0);
-        const val = Number(item.valor || 0);
-        const subtotal = qtd * val;
+      itens.forEach((it, idx) => {
+        const qtd = Number(it.qtd || 0);
+        const preco = Number(it.preco || 0);
+        const subtotal = qtd * preco;
 
-        const card = document.createElement("div");
-        card.className = "card";
+        const container = document.createElement("div");
+        container.className = "swipe-container";
 
-        card.innerHTML = `
-          <div class="item-topo">
-            <span class="item-nome">${escaparHtml(item.item)}</span>
-            <button type="button" class="remover" data-index="${index}" aria-label="Remover">✕</button>
+        container.innerHTML = `
+          <div class="btn-apagar-bg" data-idx="${idx}">
+            <svg viewBox="0 0 24 24"><path d="M6 19c0 1.1.9 2 2 2h8c1.1 0 2-.9 2-2V7H6v12zM19 4h-3.5l-1-1h-5l-1 1H5v2h14V4z"/></svg>
+            Apagar
           </div>
-
-          <div class="campos-item">
-            <div>
-              <label for="qtd-${index}">Quantidade</label>
-              <input
-                id="qtd-${index}"
-                type="text"
-                inputmode="decimal"
-                placeholder="Ex.: 2"
-                value="${qtd > 0 ? qtd : ''}"
-                data-campo="quantidade"
-                data-index="${index}"
-              />
+          <div class="item-card" data-idx="${idx}">
+            <div class="item-topo">
+              <span class="item-titulo">${it.nome}</span>
+              <span class="item-subtotal" id="subtotal-${idx}">${formatarMoeda(subtotal)}</span>
             </div>
-            <div>
-              <label for="val-${index}">Valor Unit.</label>
-              <input
-                id="val-${index}"
-                type="text"
-                inputmode="decimal"
-                placeholder="Ex.: 12,90"
-                value="${val > 0 ? String(val).replace('.', ',') : ''}"
-                data-campo="valor"
-                data-index="${index}"
-              />
+            <div class="campos-inline">
+              <div class="input-box">
+                <label>Qtd</label>
+                <input type="text" inputmode="decimal" placeholder="0" value="${qtd > 0 ? qtd : ''}" data-campo="qtd" data-idx="${idx}" />
+              </div>
+              <div class="input-box">
+                <label>Valor Unit.</label>
+                <input type="text" inputmode="decimal" placeholder="0,00" value="${preco > 0 ? String(preco).replace('.', ',') : ''}" data-campo="preco" data-idx="${idx}" />
+              </div>
             </div>
-          </div>
-
-          <div class="item-total" id="subtotal-${index}">
-            Total: ${formatar(subtotal)}
           </div>
         `;
 
-        lista.appendChild(card);
-      
+        lista.appendChild(container);
+      });
+
+      atualizarTotais();
+      configurarEventos();
+    }
+
+    function configurarEventos() {
+      document.querySelectorAll("input[data-campo]").forEach(input => {
+        function atualizarCampo() {
+          const idx = Number(input.dataset.idx);
+          const campo = input.dataset.campo;
+          const val = converterNum(input.value);
+
+          itens[idx][campo] = val;
+          salvar();
+
+          const sub = Number(itens[idx].qtd || 0) * Number(itens[idx].preco || 0);
+          const spanSub = document.getElementById(`subtotal-${idx}`);
+          if (spanSub) spanSub.textContent = formatarMoeda(sub);
+
+          atualizarTotais();
+        }
+
+        input.addEventListener("input", atualizarCampo);
+        input.addEventListener("change", atualizarCampo);
+        input.addEventListener("blur", atualizarCampo);
+      });
+
+      document.querySelectorAll(".btn-apagar-bg").forEach(btn => {
+        btn.addEventListener("click", () => {
+          const idx = Number(btn.dataset.idx);
+          itens.splice(idx, 1);
+          salvar();
+          renderizar();
+        });
+      });
+
+      document.querySelectorAll(".item-card").forEach(card => {
+        let startX = 0;
+        let currentX = 0;
+        let aberto = false;
+
+        card.addEventListener("touchstart", (e) => {
+          startX = e.touches[0].clientX;
+        }, { passive: true });
+
+        card.addEventListener("touchmove", (e) => {
+          const diff = e.touches[0].clientX - startX;
+          if (diff < 0) {
+            currentX = Math.max(diff, -90);
+            card.style.transform = `translateX(${currentX}px)`;
+          } else if (aberto && diff > 0) {
+            currentX = Math.min(-90 + diff, 0);
+            card.style.transform = `translateX(${currentX}px)`;
+          }
+        }, { passive: true });
+
+        card.addEventListener("touchend", () => {
+          if (currentX < -45) {
+            card.style.transform = "translateX(-90px)";
+            aberto = true;
+          } else {
+            card.style.transform = "translateX(0px)";
+            aberto = false;
+          }
+        });
+      });
+    }
+
+    form.addEventListener("submit", (e) => {
+      e.preventDefault();
+      const nome = nomeInput.value.trim();
+      if (!nome) return;
+
+      itens.unshift({ nome: nome, qtd: 0, preco: 0 });
+      nomeInput.value = "";
+      salvar();
+      renderizar();
+    });
+
+    document.getElementById("btnExportar").addEventListener("click", () => {
+      if (!itens.length) return alert("A lista está vazia.");
+      const blob = new Blob([JSON.stringify(itens, null, 2)], { type: "application/json" });
+      const a = document.createElement("a");
+      a.href = URL.createObjectURL(blob);
+      a.download = `compras-${new Date().toISOString().slice(0, 10)}.json`;
+      a.click();
+    });
+
+    inputImportar.addEventListener("change", (e) => {
+      const file = e.target.files[0];
+      if (!file) return;
+      const reader = new FileReader();
+      reader.onload = () => {
+        try {
+          itens = JSON.parse(reader.result);
+          salvar();
+          renderizar();
+        } catch {
+          alert("Arquivo inválido.");
+        }
+      };
+      reader.readAsText(file);
+      e.target.value = "";
+    });
+
+    document.getElementById("btnLimparTudo").addEventListener("click", () => {
+      if (itens.length && confirm("Deseja apagar todos os itens da lista?")) {
+        itens = [];
+        salvar();
+        renderizar();
+      }
+    });
+
+    renderizar();
+  </script>
+</body>
+</html>
