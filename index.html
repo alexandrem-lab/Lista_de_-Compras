@@ -5,7 +5,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover" />
   <title>Lista de Compras</title>
 
-  <link rel="apple-touch-icon" sizes="180x180" href="Apple-touch-icon.png">
+  <link rel="apple-touch-icon" sizes="180x180" href="apple-touch-icon.png">
   <meta name="apple-mobile-web-app-capable" content="yes">
   <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
   <meta name="apple-mobile-web-app-title" content="Compras">
@@ -18,11 +18,8 @@
       user-select: none;
     }
 
-    /* Regra que bloqueia o auto-zoom do iOS Safari */
-    input, textarea, select {
-      font-size: 17px !important;
+    input, textarea {
       user-select: auto;
-      -webkit-text-size-adjust: 100%;
     }
 
     html, body {
@@ -32,8 +29,7 @@
       color: #ffffff;
       font-family: -apple-system, BlinkMacSystemFont, "SF Pro Text", "SF Pro Icons", "Helvetica Neue", Helvetica, Arial, sans-serif;
       min-height: 100vh;
-      width: 100%;
-      overflow-x: hidden;
+      touch-action: pan-y;
     }
 
     header {
@@ -84,7 +80,7 @@
       background: transparent;
       border: none;
       color: #fff;
-      font-size: 17px !important;
+      font-size: 16px;
       outline: none;
       padding: 6px 0;
     }
@@ -180,7 +176,7 @@
     }
 
     .input-box label {
-      font-size: 11px;
+      font-size: 10px;
       text-transform: uppercase;
       color: #8e8e93;
       font-weight: 600;
@@ -191,12 +187,11 @@
       background: transparent;
       border: none;
       color: #ffffff;
-      font-size: 17px !important;
+      font-size: 16px;
       font-weight: 500;
       outline: none;
       padding: 0;
       width: 100%;
-      height: 24px;
     }
 
     .vazio {
@@ -292,11 +287,6 @@
   </div>
 
   <script>
-    // Impede o gesto nativo de pinça/zoom do Safari
-    document.addEventListener('gesturestart', function (e) {
-      e.preventDefault();
-    });
-
     const CHAVE = "listaComprasIOS_v1";
     let itens = [];
 
