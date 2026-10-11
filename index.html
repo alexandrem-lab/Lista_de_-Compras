@@ -2,7 +2,7 @@
 <html lang="pt-BR">
 <head>
   <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover" />
   <title>Lista de Compras</title>
 
   <link rel="apple-touch-icon" sizes="180x180" href="apple-touch-icon.png">
@@ -12,583 +12,514 @@
   <meta name="theme-color" content="#16a34a">
 
   <style>
-    :root {
-      --verde: #16a34a;
-      --verde-escuro: #15803d;
-      --vermelho: #dc2626;
-      --fundo: #f3f4f6;
-      --borda: #e5e7eb;
-      --texto: #111827;
-      --cinza: #6b7280;
-    }
-
     * {
       box-sizing: border-box;
       -webkit-tap-highlight-color: transparent;
+      user-select: none;
     }
 
-    html,
-    body {
+    input, textarea {
+      user-select: auto;
+      font-size: 17px !important;
+      -webkit-text-size-adjust: 100%;
+    }
+
+    html, body {
       margin: 0;
       padding: 0;
-      min-height: 100%;
-      background: var(--fundo);
-      color: var(--texto);
+      background: #f1f3f5;
+      color: #111827;
       font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Arial, sans-serif;
-      overscroll-behavior-y: none;
+      min-height: 100vh;
+      overflow-x: hidden;
     }
 
+    /* Topo Verde Exato */
     header {
       position: sticky;
       top: 0;
-      z-index: 20;
-      padding: 16px;
+      z-index: 30;
+      background: #16a34a;
+      color: #ffffff;
+      padding: max(14px, env(safe-area-inset-top)) 16px 14px 16px;
       text-align: center;
-      color: #fff;
-      background: var(--verde);
-      box-shadow: 0 2px 6px rgba(0, 0, 0, .14);
+      box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
     }
 
     header h1 {
       margin: 0;
-      font-size: 20px;
-    }
-
-    main {
-      max-width: 760px;
-      margin: 0 auto;
-      padding: 12px;
-      padding-bottom: 115px;
-    }
-
-    .adicionar-area {
-      display: flex;
-      gap: 8px;
-      margin-bottom: 12px;
-    }
-
-    .adicionar-area input {
-      flex: 1;
-      min-width: 0;
-    }
-
-    input {
-      width: 100%;
-      min-height: 48px;
-      padding: 11px 12px;
-      font-size: 16px;
-      color: var(--texto);
-      background: #fff;
-      border: 1px solid #d1d5db;
-      border-radius: 10px;
-    }
-
-    input:focus {
-      outline: 2px solid rgba(22, 163, 74, .35);
-      border-color: var(--verde);
-    }
-
-    button {
-      border: 0;
-      cursor: pointer;
-      font-family: inherit;
+      font-size: 18px;
       font-weight: 700;
-    }
-
-    .btn-adicionar {
-      flex: 0 0 auto;
-      min-width: 106px;
-      padding: 0 16px;
-      color: #fff;
-      background: var(--verde);
-      border-radius: 10px;
-      font-size: 15px;
-    }
-
-    .btn-adicionar:active {
-      background: var(--verde-escuro);
-    }
-
-    .lista {
-      overflow: hidden;
-      background: #fff;
-      border: 1px solid var(--borda);
-      border-radius: 14px;
-      box-shadow: 0 2px 8px rgba(0, 0, 0, .06);
-    }
-
-    .linha-vazia {
-      padding: 28px 16px;
-      text-align: center;
-      color: var(--cinza);
-      font-size: 15px;
-    }
-
-    .swipe-item {
-      position: relative;
-      overflow: hidden;
-      min-height: 92px;
-      border-bottom: 1px solid var(--borda);
-      touch-action: pan-y;
-    }
-
-    .swipe-item:last-child {
-      border-bottom: 0;
-    }
-
-    .acao-excluir {
-      position: absolute;
-      top: 0;
-      right: 0;
-      bottom: 0;
-      width: 104px;
       display: flex;
       align-items: center;
       justify-content: center;
-      color: #fff;
-      background: var(--vermelho);
-      font-size: 15px;
+      gap: 6px;
     }
 
-    .conteudo-item {
-      position: relative;
-      z-index: 1;
-      display: grid;
-      grid-template-columns: minmax(0, 1fr) 76px 105px;
+    main {
+      padding: 16px;
+      padding-bottom: 120px;
+      max-width: 650px;
+      margin: 0 auto;
+    }
+
+    /* Linha de Adicionar Item */
+    .form-topo {
+      display: flex;
       gap: 8px;
-      align-items: center;
-      min-height: 92px;
-      padding: 12px;
-      background: #fff;
-      transform: translateX(0);
-      transition: transform .18s ease;
-      will-change: transform;
+      margin-bottom: 16px;
     }
 
-    .conteudo-item.aberto {
-      transform: translateX(-104px);
+    .form-topo input {
+      flex: 1;
+      background: #ffffff;
+      border: 1px solid #d1d5db;
+      border-radius: 8px;
+      padding: 10px 14px;
+      color: #111827;
+      outline: none;
     }
 
-    .nome-item {
-      min-width: 0;
+    .form-topo input::placeholder {
+      color: #9ca3af;
     }
 
-    .nome-item strong {
-      display: block;
+    .form-topo button {
+      background: #16a34a;
+      color: #ffffff;
+      border: none;
+      border-radius: 8px;
+      padding: 0 18px;
+      font-size: 15px;
+      font-weight: 700;
+      cursor: pointer;
+    }
+
+    .form-topo button:active {
+      background: #15803d;
+    }
+
+    /* Card Branco Unificado */
+    .card-principal {
+      background: #ffffff;
+      border-radius: 12px;
+      box-shadow: 0 1px 4px rgba(0, 0, 0, 0.08);
       overflow: hidden;
-      font-size: 16px;
-      text-overflow: ellipsis;
-      white-space: nowrap;
     }
 
-    .status-item {
-      margin-top: 4px;
+    .swipe-container {
+      position: relative;
+      background: #ef4444; /* Vermelho do apagar */
+      overflow: hidden;
+    }
+
+    .swipe-container:not(:last-child)::after {
+      content: "";
+      position: absolute;
+      left: 16px;
+      right: 16px;
+      bottom: 0;
+      height: 1px;
+      background: #f3f4f6;
+      z-index: 5;
+      pointer-events: none;
+    }
+
+    .btn-apagar-bg {
+      position: absolute;
+      right: 0;
+      top: 0;
+      bottom: 0;
+      width: 80px;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      color: #ffffff;
+      font-size: 12px;
+      font-weight: 700;
+      gap: 2px;
+      cursor: pointer;
+    }
+
+    .item-linha {
+      position: relative;
+      background: #ffffff;
+      padding: 14px 16px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      transform: translateX(0px);
+      transition: transform 0.2s cubic-bezier(0.2, 0.8, 0.2, 1);
+      z-index: 2;
+    }
+
+    .item-info {
+      flex: 1;
+      padding-right: 12px;
+    }
+
+    .item-nome {
+      font-size: 16px;
+      font-weight: 700;
+      color: #111827;
+      word-break: break-word;
+    }
+
+    .item-status {
       font-size: 12px;
       color: #d97706;
+      margin-top: 3px;
+      font-weight: 500;
     }
 
-    .status-item.preenchido {
-      color: var(--verde);
+    .item-status.preenchido {
+      color: #16a34a;
     }
 
-    .campo-item label {
-      display: block;
-      margin-bottom: 4px;
-      color: var(--cinza);
-      font-size: 11px;
-      font-weight: 700;
+    .item-controles {
+      display: flex;
+      flex-direction: column;
+      align-items: flex-end;
+      gap: 6px;
     }
 
-    .campo-item input {
-      min-height: 42px;
-      padding: 8px;
-      font-size: 15px;
+    .inputs-wrapper {
+      display: flex;
+      gap: 8px;
+    }
+
+    .campo-pequeno {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 2px;
+    }
+
+    .campo-rotulo {
+      font-size: 10px;
+      color: #6b7280;
+      font-weight: 600;
+    }
+
+    .campo-pequeno input {
+      width: 65px;
+      background: #ffffff;
+      border: 1px solid #d1d5db;
+      border-radius: 6px;
+      padding: 4px 6px;
       text-align: center;
-      border-radius: 8px;
+      color: #111827;
+      outline: none;
+      height: 32px;
     }
 
-    .total-item {
-      grid-column: 1 / -1;
-      margin-top: -3px;
-      color: var(--verde);
-      font-size: 14px;
+    .campo-pequeno input:focus {
+      border-color: #16a34a;
+    }
+
+    .item-subtotal-texto {
+      font-size: 12px;
       font-weight: 700;
-      text-align: right;
+      color: #16a34a;
     }
 
-    .barra-total {
+    .lista-vazia {
+      padding: 36px 16px;
+      text-align: center;
+      color: #9ca3af;
+      font-size: 14px;
+    }
+
+    /* Barra Fixa Inferior */
+    .barra-rodape {
       position: fixed;
+      left: 0;
       right: 0;
       bottom: 0;
-      left: 0;
-      z-index: 30;
+      z-index: 20;
+      background: #ffffff;
+      border-top: 1px solid #e5e7eb;
+      padding: 14px 20px calc(14px + env(safe-area-inset-bottom)) 20px;
       display: flex;
-      align-items: center;
       justify-content: space-between;
-      padding: 14px 16px calc(14px + env(safe-area-inset-bottom));
-      background: #fff;
-      border-top: 1px solid var(--borda);
-      box-shadow: 0 -2px 10px rgba(0, 0, 0, .08);
+      align-items: center;
+      box-shadow: 0 -1px 3px rgba(0, 0, 0, 0.05);
     }
 
-    .barra-total span {
-      color: #374151;
+    .rodape-label {
       font-size: 15px;
       font-weight: 700;
+      color: #111827;
     }
 
-    .valor-total {
-      color: var(--verde);
-      font-size: 21px;
+    .rodape-total {
+      font-size: 20px;
       font-weight: 800;
+      color: #16a34a;
     }
 
-    @media (max-width: 390px) {
-      .conteudo-item {
-        grid-template-columns: minmax(0, 1fr) 68px 93px;
-        gap: 6px;
-        padding: 10px;
-      }
+    .botoes-aux {
+      display: flex;
+      gap: 8px;
+      margin-top: 16px;
+    }
 
-      .campo-item input {
-        font-size: 14px;
-      }
-
-      .btn-adicionar {
-        min-width: 92px;
-        padding: 0 12px;
-      }
+    .btn-aux {
+      flex: 1;
+      background: #e5e7eb;
+      color: #374151;
+      border: none;
+      padding: 8px;
+      border-radius: 6px;
+      font-size: 12px;
+      font-weight: 600;
+      text-align: center;
+      cursor: pointer;
     }
   </style>
 </head>
-
 <body>
+
   <header>
     <h1>🛒 Lista de Compras</h1>
   </header>
 
   <main>
-    <form id="formItem" class="adicionar-area">
-      <input
-        id="novoItem"
-        type="text"
-        placeholder="Adicionar item..."
-        autocomplete="off"
-        enterkeyhint="done"
-      >
-      <button class="btn-adicionar" type="submit">Adicionar</button>
+    <form id="formAdicionar" class="form-topo">
+      <input id="nomeInput" type="text" placeholder="Adicionar item..." autocomplete="off" />
+      <button type="submit">Adicionar</button>
     </form>
 
-    <div id="lista" class="lista"></div>
+    <div class="card-principal" id="listaItens">
+      <div id="msgVazio" class="lista-vazia">Nenhum item adicionado ainda.</div>
+    </div>
+
+    <div class="botoes-aux">
+      <button type="button" id="btnExportar" class="btn-aux">Backup</button>
+      <label for="inputImportar" class="btn-aux">Restaurar</label>
+      <input type="file" id="inputImportar" accept=".json" hidden />
+      <button type="button" id="btnLimparTudo" class="btn-aux" style="color: #dc2626;">Limpar tudo</button>
+    </div>
   </main>
 
-  <div class="barra-total">
-    <span>Total geral</span>
-    <div id="totalGeral" class="valor-total">R$ 0,00</div>
+  <div class="barra-rodape">
+    <div class="rodape-label">Total geral</div>
+    <div id="totalGeral" class="rodape-total">R$ 0,00</div>
   </div>
 
   <script>
-    const CHAVE = "listaComprasV3";
-    const LIMITE_SWIPE = 104;
+    document.addEventListener('gesturestart', (e) => e.preventDefault());
 
+    const CHAVE = "listaComprasV4";
     let itens = [];
 
     try {
       itens = JSON.parse(localStorage.getItem(CHAVE) || "[]");
-
-      if (!Array.isArray(itens)) {
-        itens = [];
-      }
-    } catch (erro) {
+      if (!Array.isArray(itens)) itens = [];
+    } catch {
       itens = [];
     }
 
-    const form = document.getElementById("formItem");
-    const novoItemInput = document.getElementById("novoItem");
-    const lista = document.getElementById("lista");
+    const form = document.getElementById("formAdicionar");
+    const nomeInput = document.getElementById("nomeInput");
+    const lista = document.getElementById("listaItens");
     const totalGeral = document.getElementById("totalGeral");
+    const inputImportar = document.getElementById("inputImportar");
 
-    function escaparHtml(texto) {
-      const div = document.createElement("div");
-      div.textContent = String(texto || "");
-      return div.innerHTML;
+    function salvar() {
+      localStorage.setItem(CHAVE, JSON.stringify(itens));
     }
 
-    function converterNumero(texto) {
-      let valor = String(texto ?? "")
-        .trim()
-        .replace("R$", "")
-        .replace(/\s/g, "");
-
-      if (!valor) return 0;
-
-      if (valor.includes(",") && valor.includes(".")) {
-        valor = valor.replace(/\./g, "").replace(",", ".");
-      } else if (valor.includes(",")) {
-        valor = valor.replace(",", ".");
-      }
-
-      const numero = Number(valor);
-      return Number.isFinite(numero) && numero >= 0 ? numero : 0;
-    }
-
-    function formatarMoeda(valor) {
-      return Number(valor || 0).toLocaleString("pt-BR", {
+    function formatarMoeda(val) {
+      return Number(val || 0).toLocaleString("pt-BR", {
         style: "currency",
         currency: "BRL"
       });
     }
 
-    function valorParaCampo(valor) {
-      const numero = Number(valor || 0);
-      return numero > 0 ? String(numero).replace(".", ",") : "";
+    function converterNum(texto) {
+      if (!texto) return 0;
+      let str = String(texto).trim().replace("R$", "").replace(/\s/g, "");
+      if (str.includes(",") && str.includes(".")) str = str.replace(/\./g, "").replace(",", ".");
+      else if (str.includes(",")) str = str.replace(",", ".");
+      const n = Number(str);
+      return Number.isFinite(n) && n >= 0 ? n : 0;
     }
 
-    function salvar() {
-      try {
-        localStorage.setItem(CHAVE, JSON.stringify(itens));
-      } catch (erro) {
-        console.error("Não foi possível salvar a lista.", erro);
-      }
-    }
-
-    function calcularTotalGeral() {
-      return itens.reduce((soma, item) => {
-        return soma + Number(item.quantidade || 0) * Number(item.valor || 0);
-      }, 0);
-    }
-
-    function atualizarTotalGeral() {
-      totalGeral.textContent = formatarMoeda(calcularTotalGeral());
-    }
-
-    function fecharOutrosItens(excecao = null) {
-      document.querySelectorAll(".conteudo-item.aberto").forEach(elemento => {
-        if (elemento !== excecao) {
-          elemento.classList.remove("aberto");
-        }
-      });
+    function atualizarTotais() {
+      const total = itens.reduce((s, it) => s + (Number(it.qtd || 0) * Number(it.preco || 0)), 0);
+      totalGeral.textContent = formatarMoeda(total);
     }
 
     function renderizar() {
       lista.innerHTML = "";
 
       if (itens.length === 0) {
-        lista.innerHTML = `
-          <div class="linha-vazia">
-            Nenhum item adicionado ainda.
-          </div>
-        `;
-        atualizarTotalGeral();
+        lista.innerHTML = `<div class="lista-vazia">Nenhum item adicionado ainda.</div>`;
+        atualizarTotais();
         return;
       }
 
-      itens.forEach((item, index) => {
-        const quantidade = Number(item.quantidade || 0);
-        const valor = Number(item.valor || 0);
-        const totalItem = quantidade * valor;
-        const preenchido = quantidade > 0 && valor > 0;
+      itens.forEach((it, idx) => {
+        const qtd = Number(it.qtd || 0);
+        const preco = Number(it.preco || 0);
+        const subtotal = qtd * preco;
+        const preenchido = qtd > 0 && preco > 0;
 
-        const linha = document.createElement("div");
-        linha.className = "swipe-item";
-        linha.dataset.index = index;
+        const container = document.createElement("div");
+        container.className = "swipe-container";
 
-        linha.innerHTML = `
-          <button type="button" class="acao-excluir" data-excluir="${index}">
-            Excluir
-          </button>
-
-          <div class="conteudo-item">
-            <div class="nome-item">
-              <strong>${escaparHtml(item.item)}</strong>
-              <div class="status-item ${preenchido ? "preenchido" : ""}">
-                ${preenchido ? "✓ Preenchido" : "Pendente"}
+        container.innerHTML = `
+          <div class="btn-apagar-bg" data-idx="${idx}">
+            ✕ Apagar
+          </div>
+          <div class="item-linha" data-idx="${idx}">
+            <div class="item-info">
+              <div class="item-nome">${it.nome}</div>
+              <div class="item-status ${preenchido ? 'preenchido' : ''}" id="status-${idx}">
+                ${preenchido ? '✔ Preenchido' : 'Pendente'}
               </div>
             </div>
 
-            <div class="campo-item">
-              <label for="quantidade-${index}">Qtd.</label>
-              <input
-                id="quantidade-${index}"
-                type="text"
-                inputmode="decimal"
-                placeholder="0"
-                value="${valorParaCampo(quantidade)}"
-                data-campo="quantidade"
-                data-index="${index}"
-              >
-            </div>
-
-            <div class="campo-item">
-              <label for="valor-${index}">Valor un.</label>
-              <input
-                id="valor-${index}"
-                type="text"
-                inputmode="decimal"
-                placeholder="0,00"
-                value="${valorParaCampo(valor)}"
-                data-campo="valor"
-                data-index="${index}"
-              >
-            </div>
-
-            <div class="total-item" data-total-item="${index}">
-              Total: ${formatarMoeda(totalItem)}
+            <div class="item-controles">
+              <div class="inputs-wrapper">
+                <div class="campo-pequeno">
+                  <span class="campo-rotulo">Qtd.</span>
+                  <input type="text" inputmode="decimal" placeholder="0" value="${qtd > 0 ? qtd : ''}" data-campo="qtd" data-idx="${idx}" />
+                </div>
+                <div class="campo-pequeno">
+                  <span class="campo-rotulo">Valor un.</span>
+                  <input type="text" inputmode="decimal" placeholder="0,00" value="${preco > 0 ? String(preco).replace('.', ',') : ''}" data-campo="preco" data-idx="${idx}" />
+                </div>
+              </div>
+              <div class="item-subtotal-texto" id="subtotal-${idx}">
+                Total: ${formatarMoeda(subtotal)}
+              </div>
             </div>
           </div>
         `;
 
-        lista.appendChild(linha);
+        lista.appendChild(container);
       });
 
-      atualizarTotalGeral();
+      atualizarTotais();
       configurarEventos();
     }
 
-    function atualizarLinha(index) {
-      const item = itens[index];
-      const total = Number(item.quantidade || 0) * Number(item.valor || 0);
-      const totalElemento = document.querySelector(`[data-total-item="${index}"]`);
-      const itemContainer = document.querySelector(`.swipe-item[data-index="${index}"]`);
-      const status = itemContainer?.querySelector(".status-item");
-
-      if (totalElemento) {
-        totalElemento.textContent = "Total: " + formatarMoeda(total);
-      }
-
-      if (status) {
-        const preenchido = Number(item.quantidade) > 0 && Number(item.valor) > 0;
-        status.textContent = preenchido ? "✓ Preenchido" : "Pendente";
-        status.classList.toggle("preenchido", preenchido);
-      }
-
-      atualizarTotalGeral();
-    }
-
     function configurarEventos() {
-      document.querySelectorAll("[data-excluir]").forEach(botao => {
-        botao.addEventListener("click", () => {
-          const index = Number(botao.dataset.excluir);
-          itens.splice(index, 1);
+      document.querySelectorAll("input[data-campo]").forEach(input => {
+        function atualizarCampo() {
+          const idx = Number(input.dataset.idx);
+          const campo = input.dataset.campo;
+          const val = converterNum(input.value);
+
+          itens[idx][campo] = val;
+          salvar();
+
+          const sub = Number(itens[idx].qtd || 0) * Number(itens[idx].preco || 0);
+          const spanSub = document.getElementById(`subtotal-${idx}`);
+          if (spanSub) spanSub.textContent = `Total: ${formatarMoeda(sub)}`;
+
+          const statusElem = document.getElementById(`status-${idx}`);
+          const preenchido = Number(itens[idx].qtd || 0) > 0 && Number(itens[idx].preco || 0) > 0;
+          if (statusElem) {
+            statusElem.textContent = preenchido ? '✔ Preenchido' : 'Pendente';
+            statusElem.className = `item-status ${preenchido ? 'preenchido' : ''}`;
+          }
+
+          atualizarTotais();
+        }
+
+        input.addEventListener("input", atualizarCampo);
+        input.addEventListener("change", atualizarCampo);
+        input.addEventListener("blur", atualizarCampo);
+      });
+
+      document.querySelectorAll(".btn-apagar-bg").forEach(btn => {
+        btn.addEventListener("click", () => {
+          const idx = Number(btn.dataset.idx);
+          itens.splice(idx, 1);
           salvar();
           renderizar();
         });
       });
 
-      document.querySelectorAll("input[data-campo]").forEach(campo => {
-        const salvarCampo = () => {
-          const index = Number(campo.dataset.index);
-          const tipo = campo.dataset.campo;
+      // Swipe lateral para apagar
+      document.querySelectorAll(".item-linha").forEach(linha => {
+        let startX = 0;
+        let currentX = 0;
+        let aberto = false;
 
-          itens[index][tipo] = converterNumero(campo.value);
-          salvar();
-          atualizarLinha(index);
-        };
+        linha.addEventListener("touchstart", (e) => {
+          startX = e.touches[0].clientX;
+        }, { passive: true });
 
-        campo.addEventListener("input", salvarCampo);
-        campo.addEventListener("change", salvarCampo);
-        campo.addEventListener("blur", salvarCampo);
+        linha.addEventListener("touchmove", (e) => {
+          const diff = e.touches[0].clientX - startX;
+          if (diff < 0) {
+            currentX = Math.max(diff, -80);
+            linha.style.transform = `translateX(${currentX}px)`;
+          } else if (aberto && diff > 0) {
+            currentX = Math.min(-80 + diff, 0);
+            linha.style.transform = `translateX(${currentX}px)`;
+          }
+        }, { passive: true });
 
-        campo.addEventListener("focus", () => {
-          fecharOutrosItens();
+        linha.addEventListener("touchend", () => {
+          if (currentX < -40) {
+            linha.style.transform = "translateX(-80px)";
+            aberto = true;
+          } else {
+            linha.style.transform = "translateX(0px)";
+            aberto = false;
+          }
         });
-      });
-
-      document.querySelectorAll(".swipe-item").forEach(itemElemento => {
-        const conteudo = itemElemento.querySelector(".conteudo-item");
-        let inicioX = 0;
-        let inicioY = 0;
-        let arrastando = false;
-        let movimentoHorizontal = false;
-
-        itemElemento.addEventListener("touchstart", evento => {
-          if (evento.target.closest("input, button")) return;
-
-          const toque = evento.touches[0];
-          inicioX = toque.clientX;
-          inicioY = toque.clientY;
-          arrastando = true;
-          movimentoHorizontal = false;
-        }, { passive: true });
-
-        itemElemento.addEventListener("touchmove", evento => {
-          if (!arrastando) return;
-
-          const toque = evento.touches[0];
-          const deltaX = toque.clientX - inicioX;
-          const deltaY = toque.clientY - inicioY;
-
-          if (!movimentoHorizontal && Math.abs(deltaY) > Math.abs(deltaX)) {
-            arrastando = false;
-            return;
-          }
-
-          if (Math.abs(deltaX) > 10) {
-            movimentoHorizontal = true;
-          }
-
-          if (!movimentoHorizontal) return;
-
-          if (deltaX < 0) {
-            conteudo.style.transition = "none";
-            conteudo.style.transform = `translateX(${Math.max(deltaX, -LIMITE_SWIPE)}px)`;
-          }
-
-          if (deltaX > 0 && conteudo.classList.contains("aberto")) {
-            conteudo.style.transition = "none";
-            conteudo.style.transform = `translateX(${Math.min(-LIMITE_SWIPE + deltaX, 0)}px)`;
-          }
-        }, { passive: true });
-
-        itemElemento.addEventListener("touchend", evento => {
-          if (!arrastando && !movimentoHorizontal) return;
-
-          const toque = evento.changedTouches[0];
-          const deltaX = toque.clientX - inicioX;
-
-          conteudo.style.transition = "";
-          conteudo.style.transform = "";
-
-          if (deltaX < -45) {
-            fecharOutrosItens(conteudo);
-            conteudo.classList.add("aberto");
-          } else if (deltaX > 25) {
-            conteudo.classList.remove("aberto");
-          } else if (!conteudo.classList.contains("aberto")) {
-            fecharOutrosItens();
-          }
-
-          arrastando = false;
-          movimentoHorizontal = false;
-        }, { passive: true });
       });
     }
 
-    form.addEventListener("submit", evento => {
-      evento.preventDefault();
+    form.addEventListener("submit", (e) => {
+      e.preventDefault();
+      const nome = nomeInput.value.trim();
+      if (!nome) return;
 
-      const nome = novoItemInput.value.trim();
-
-      if (!nome) {
-        novoItemInput.focus();
-        return;
-      }
-
-      itens.push({
-        item: nome,
-        quantidade: 0,
-        valor: 0
-      });
-
-      novoItemInput.value = "";
+      itens.push({ nome: nome, qtd: 0, preco: 0 });
+      nomeInput.value = "";
       salvar();
       renderizar();
-      novoItemInput.focus();
     });
 
-    document.addEventListener("click", evento => {
-      if (!evento.target.closest(".swipe-item")) {
-        fecharOutrosItens();
+    document.getElementById("btnExportar").addEventListener("click", () => {
+      if (!itens.length) return alert("A lista está vazia.");
+      const blob = new Blob([JSON.stringify(itens, null, 2)], { type: "application/json" });
+      const a = document.createElement("a");
+      a.href = URL.createObjectURL(blob);
+      a.download = `compras-${new Date().toISOString().slice(0, 10)}.json`;
+      a.click();
+    });
+
+    inputImportar.addEventListener("change", (e) => {
+      const file = e.target.files[0];
+      if (!file) return;
+      const reader = new FileReader();
+      reader.onload = () => {
+        try {
+          itens = JSON.parse(reader.result);
+          salvar();
+          renderizar();
+        } catch {
+          alert("Arquivo inválido.");
+        }
+      };
+      reader.readAsText(file);
+      e.target.value = "";
+    });
+
+    document.getElementById("btnLimparTudo").addEventListener("click", () => {
+      if (itens.length && confirm("Deseja apagar todos os itens da lista?")) {
+        itens = [];
+        salvar();
+        renderizar();
       }
     });
 
